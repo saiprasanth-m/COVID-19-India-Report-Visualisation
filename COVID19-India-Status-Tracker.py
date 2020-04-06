@@ -69,11 +69,14 @@ def read_data_from_file(filename):
 
 def write_data_to_file(filename,case_stats):
     out = read_data_from_file(filename)
-    
-    if out[len(out)-1]!= case_stats:
-        write_file = open(filename,"a")
-        write_file.write(case_stats)
-        write_file.close()
+    last_entry = out[len(out)-1]
+    if last_entry != case_stats:
+        if last_entry.split(":")[0] == case_stats.split(":")[0]:
+            temp_data = out[:len(out)].append(case_stats)
+            print(out[:len(out)])
+            write_file = open(filename,"a")
+            write_file.write(case_stats)
+            write_file.close()
 
 def get_date_wise_data(input_date,filename):
     out = read_data_from_file(filename)
@@ -92,6 +95,23 @@ def get_date_wise_data(input_date,filename):
     return active_data, recov_data, death_data
 
 def plot_state_wise_data(date,states,confirmed,recovered,death):
+
+    """
+    To Visualize state-wise covid-19 case counts in a bar chart
+    X-axis - States/Union Territories
+    Y-axis - Counts in range of 100
+
+    Inputs:
+    date      - current date to get the total case counts | Data_Type- String | Format- 'yyyy-mm-dd'
+    states    - List of corona affected states in india | Data_Type- List of strings
+    confirmed - List of active case counts with respect to states list | Data_Type- List of strings
+    recovered - List of recovered case counts with respect to states list | Data_Type- List of strings
+    death     - List of death case counts with respect to states list | Data_Type- List of strings
+
+    Outputs:
+    returns NULL
+    """
+
     X = np.arange(len(states))
     fig = plt.figure(figsize = (20,10))
 
@@ -115,9 +135,23 @@ def plot_state_wise_data(date,states,confirmed,recovered,death):
     for index, value in enumerate(confirmed):
         plt.text(index, value, str(value), fontsize = 20, color='r',horizontalalignment = 'center',verticalalignment = 'bottom')
 
-    plt.savefig(r'Case Study/Case-Study-'+cur_date+'.png')
+    plt.savefig(r'State-wise Reports/State-wise Report-'+cur_date+'.png')
 
 def plot_date_wise_data():
+
+    '''
+    To Visualize date-wise covid-19 case counts in a bar chart
+    X-axis - Date
+    Y-axis - Counts in range of 100
+
+    Inputs:
+    No input arguments
+
+    Outputs:
+    returns NULL
+    '''
+
+
     stat_dates = []
     actives = []
     recovs = []
@@ -162,7 +196,7 @@ def plot_date_wise_data():
     for index, value in enumerate(deaths):
         plt.text(index+0.50 , value, str(value), fontsize = 20, color='r',horizontalalignment = 'center',verticalalignment = 'bottom')
 
-    plt.savefig(r'Daily Stats/Daily-Stats-'+cur_date+'.png')
+    plt.savefig(r'Date-wise Reports/Date-wise Report-'+cur_date+'.png')
 
 if __name__ == "__main__":
     
@@ -170,7 +204,7 @@ if __name__ == "__main__":
     case_stats,fin_dict,columns = get_data_from_url("https://www.mohfw.gov.in/")
     
     table = pd.DataFrame(data=fin_dict)
-    #table.to_excel(r'Excel-Covid-19/'+"COVID-19 INDIA "+cur_date+".xlsx",index = False)
+    #table.to_excel(r'excel_data/'+"COVID-19 INDIA "+cur_date+".xlsx",index = False)
 
     new_table = table[:-1] # Eliminating last row
     

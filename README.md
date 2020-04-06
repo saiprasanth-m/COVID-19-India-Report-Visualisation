@@ -7,3 +7,5 @@ This project contains the following
 3. Simple visualisation of the extracted data with bar charts using *matplotlib library*.
 
 Further implementation of reports/visual graphs generation is being developed.
+
+![MoHFW- Official Site](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/images/MoHFW.jpg)

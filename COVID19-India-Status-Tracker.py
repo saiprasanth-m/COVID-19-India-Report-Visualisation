@@ -62,7 +62,7 @@ def get_data_from_url(Url):
         return case_stats,fin_dict,columns
 
 def read_data_from_file(filename):
-    read_file = open(filename,"r")
+    read_file = open(filename,"r",encoding = 'utf-8')
     out = read_file.readlines()
     read_file.close()
     return out
@@ -71,9 +71,16 @@ def write_data_to_file(filename,case_stats):
     out = read_data_from_file(filename)
     last_entry = out[len(out)-1]
     if last_entry != case_stats:
-        if last_entry.split(":")[0] == case_stats.split(":")[0]:
-            temp_data = out[:len(out)].append(case_stats)
-            print(out[:len(out)])
+        if last_entry.split(":")[0] == case_stats.split(":")[0]: #If case data has been updated in the same date
+            temp_data = out[:len(out)-1]
+            temp_str = ""
+            for val in temp_data:
+                temp_str = temp_str+val
+            temp_str = temp_str+case_stats
+            write_file = open(filename,"w")
+            write_file.write(temp_str)
+            write_file.close()
+        else:
             write_file = open(filename,"a")
             write_file.write(case_stats)
             write_file.close()
@@ -103,10 +110,10 @@ def plot_state_wise_data(date,states,confirmed,recovered,death):
 
     Inputs:
     date      - current date to get the total case counts | Data_Type- String | Format- 'yyyy-mm-dd'
-    states    - List of corona affected states in india | Data_Type- List of strings
-    confirmed - List of active case counts with respect to states list | Data_Type- List of strings
-    recovered - List of recovered case counts with respect to states list | Data_Type- List of strings
-    death     - List of death case counts with respect to states list | Data_Type- List of strings
+    states    - List of corona affected states in india
+    confirmed - List of active case counts with respect to states list
+    recovered - List of recovered case counts with respect to states list
+    death     - List of death case counts with respect to states list
 
     Outputs:
     returns NULL
@@ -150,7 +157,6 @@ def plot_date_wise_data():
     Outputs:
     returns NULL
     '''
-
 
     stat_dates = []
     actives = []
@@ -204,7 +210,7 @@ if __name__ == "__main__":
     case_stats,fin_dict,columns = get_data_from_url("https://www.mohfw.gov.in/")
     
     table = pd.DataFrame(data=fin_dict)
-    #table.to_excel(r'excel_data/'+"COVID-19 INDIA "+cur_date+".xlsx",index = False)
+    table.to_excel(r'excel_data/'+"COVID-19 INDIA "+cur_date+".xlsx",index = False)
 
     new_table = table[:-1] # Eliminating last row
     

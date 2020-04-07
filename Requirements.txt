@@ -1,0 +1,17 @@
+_________ Libraries needed to run _________
+
+***To install using command prompt***
+
+Requests - pip install requests
+BeautifulSoup - pip install beautifulsoup4
+Pandas - pip install pandas2
+Matplotlib - pip install matplotlib
+Numpy - pip install numpy
+
+***To install using anaconda prompt***
+
+Requests - conda install -c conda-forge requests
+BeautifulSoup - conda install -c conda-forge beautifulsoup4
+Pandas - conda install -c conda-forge pandas
+Matplotlib - conda install -c conda-forge matplotlib
+Numpy - conda install -c conda-forge numpy

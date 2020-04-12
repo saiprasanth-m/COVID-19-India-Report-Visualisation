@@ -130,7 +130,7 @@ def plot_state_wise_data(date,states,confirmed,recovered,death):
     max_cnt = sorted(confirmed)
     min_val = 0
     max_val = max_cnt[len(max_cnt)-1]+ 500
-    plt.yticks(np.arange(min_val,max_val,100))
+    plt.yticks(np.arange(min_val,max_val,200))
    
     plt.xlabel('States/UT',fontsize = 15)
     plt.ylabel('Count',fontsize = 15)

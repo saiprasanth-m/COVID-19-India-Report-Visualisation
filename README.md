@@ -7,8 +7,8 @@ Simple Visualisation of the official corona updates of india with [state-wise de
 
 Further implementation of reports/visual graphs generation is being developed.
 
-![](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/Active-vs-Recovered/Active-vs-Recovered-2020-04-13.png =500x400)
+![](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/Active-vs-Recovered/Active-vs-Recovered-2020-04-13.png)
 
-![](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/Active-vs-Death/Active-vs-Death-2020-04-13.png =500x400)
+![](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/Active-vs-Death/Active-vs-Death-2020-04-13.png)
 
 ![MoHFW- Official Site](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/images/MoHFW.jpg)

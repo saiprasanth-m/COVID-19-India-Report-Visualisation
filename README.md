@@ -11,4 +11,7 @@ Further implementation of reports/visual graphs generation is being developed.
 
 ![](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/Active-vs-Death/Active-vs-Death-2020-04-13.png)
 
+<p align="center">
+  <img width="399" height="194" src="https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/images/MoHFW.jpg">
+</p>
 ![MoHFW- Official Site](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/images/MoHFW.jpg)

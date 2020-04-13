@@ -27,13 +27,13 @@ def get_data_from_url(Url):
         tot_death = tot_death.get_text().split("\n")[2]
         print(tot_death)
 
-        case_stats = cur_date+ ":" +active_cases+ "," + tot_recovered+ "," +tot_death+ "\n"
-
         ### Getting Table details ###
         table = soup.find_all('table')[0]
         status = soup.find_all('div', class_='status-update')[0]
         Title = str(status.get_text()).split('\n')
-        Head = Title[1].split('as')
+        Head = Title[1].split(' ')
+        Datetime = Head[6]+' '+Head[5]
+        case_stats = Datetime+ ":" +active_cases+ "," + tot_recovered+ "," +tot_death+ "\n"
 
         ### Getting Table details ###
         columns = []
@@ -58,8 +58,8 @@ def get_data_from_url(Url):
         fin_dict = {}  
         for cnt in range(0,len(columns)):
             fin_dict[columns[cnt]] = final[cnt]
-
-        return case_stats,fin_dict,columns
+        
+        return case_stats,fin_dict,columns,Title[1]
 
 def read_data_from_file(filename):
     read_file = open(filename,"r",encoding = 'utf-8')
@@ -87,21 +87,22 @@ def write_data_to_file(filename,case_stats):
 
 def get_date_wise_data(input_date,filename):
     out = read_data_from_file(filename)
+    input_date = input_date.split('-')[2]
     for data in out:
         data = data.split(":")
-        date_data = data[0]
-        if date_data == input_date:
+        date_data = data[0].split(' ')
+        if date_data[1] == input_date:
             case_data = data[1]
             case_data = case_data.split(",")
             active_data = case_data[0]
             recov_data = case_data[1]
             death_data = case_data[2]
             break
-    print('Date: '+input_date+ ', '+ 'Active Cases - '+active_data,'Recovered - '+recov_data, 'Deaths - '+death_data)
+##    print('Date: '+input_date+ ', '+ 'Active Cases - '+active_data,'Recovered - '+recov_data, 'Deaths - '+death_data)
     
     return active_data, recov_data, death_data
 
-def plot_state_wise_data(date,states,confirmed,recovered,death):
+def plot_state_wise_data(date,states,confirmed,recovered,death,title):
 
     """
     To Visualize state-wise covid-19 case counts in a bar chart
@@ -130,13 +131,13 @@ def plot_state_wise_data(date,states,confirmed,recovered,death):
     max_cnt = sorted(confirmed)
     min_val = 0
     max_val = max_cnt[len(max_cnt)-1]+ 500
-    plt.yticks(np.arange(min_val,max_val,200))
+    plt.yticks(np.arange(min_val,max_val,200),fontsize = 12)
    
     plt.xlabel('States/UT',fontsize = 15)
     plt.ylabel('Count',fontsize = 15)
-    plt.title('Covid-19 State-wise Report dated on '+date,fontsize = 15)
+    plt.title(title,fontsize = 15)
 
-    active_data, recov_data, death_data = get_date_wise_data(date,filename)
+    active_data, recov_data, death_data = get_date_wise_data(cur_date,filename)
     
     plt.legend(labels=['Active Cases - '+active_data,'Recovered - '+recov_data, 'Deaths - '+death_data],loc ='upper right', fontsize = 15)
     for index, value in enumerate(confirmed):
@@ -157,6 +158,7 @@ def plot_date_wise_data():
     Outputs:
     returns NULL
     '''
+
 
     stat_dates = []
     actives = []
@@ -187,8 +189,8 @@ def plot_date_wise_data():
     plt.bar(X+0.25, recovs, 0.25, color='b')
     plt.bar(X+0.50, deaths, 0.25, color='r')
 
-    plt.xticks(X, stat_dates, rotation=45)
-    plt.yticks(np.arange(0,10001,1000))
+    plt.xticks(X, stat_dates, fontsize = 12)
+    plt.yticks(np.arange(0,10001,1000), fontsize = 12)
 
     plt.xlabel('Cases',fontsize = 15)
     plt.ylabel('Count',fontsize = 15)
@@ -198,19 +200,107 @@ def plot_date_wise_data():
     for index, value in enumerate(actives):
         plt.text(index , value, str(value), fontsize = 20, color='g',horizontalalignment = 'center',verticalalignment = 'bottom')
     for index, value in enumerate(recovs):
-        plt.text(index+0.25 , value, str(value), fontsize = 20, color='b',horizontalalignment = 'center',verticalalignment = 'bottom')
+        plt.text(index+0.25+0.10 , value, str(value), fontsize = 15, color='b',horizontalalignment = 'center',verticalalignment = 'bottom')
     for index, value in enumerate(deaths):
-        plt.text(index+0.50 , value, str(value), fontsize = 20, color='r',horizontalalignment = 'center',verticalalignment = 'bottom')
+        plt.text(index+0.50+0.10 , value, str(value), fontsize = 15, color='r',horizontalalignment = 'center',verticalalignment = 'bottom')
 
     plt.savefig(r'Date-wise Reports/Date-wise Report-'+cur_date+'.png')
 
+def plot_active_vs_recovered_data():
+    stat_dates = []
+    actives = []
+    recovs = []
+    deaths = []
+
+    out = read_data_from_file(filename)
+    for data in out:
+        data = data.split(":")
+        date_data = data[0]
+        case_data = data[1]
+
+        stat_dates.append(date_data)
+
+        case_data = case_data.split(",")
+        active_data = case_data[0]
+        recov_data = case_data[1]
+        death_data = case_data[2]
+        
+        actives.append(int(active_data))
+        recovs.append(int(recov_data))
+        deaths.append(int(death_data))
+
+    fig = plt.figure(figsize=(20,10))
+
+    plt.title("Active vs Recovered", fontsize=15)
+    plt.xlabel("Date", fontsize=15)
+    plt.ylabel("Cases Counts", fontsize=15)
+    plt.plot(stat_dates, actives, color="r", linewidth=5)
+    plt.plot(stat_dates, recovs, color="g", linewidth=5)
+
+    plt.yticks(np.arange(0, actives[-1]+3001, 2000))
+    plt.legend(labels = ["Active", "Recovered"], fontsize=15)
+
+    for ind, data in enumerate(actives):
+        plt.text(ind, data+230, str(data), fontsize = 15, color='r',horizontalalignment = 'center',verticalalignment = 'bottom')
+
+    for ind, data in enumerate(recovs):
+        plt.text(ind, data+230, str(data), fontsize = 15, color='g',horizontalalignment = 'center',verticalalignment = 'bottom')
+
+    plt.grid(axis='y')
+    plt.savefig(r'Active-vs-Recovered-' + cur_date + '.png')
+
+def plot_active_vs_death_data():
+    stat_dates = []
+    actives = []
+    recovs = []
+    deaths = []
+
+    out = read_data_from_file(filename)
+    for data in out:
+        data = data.split(":")
+        date_data = data[0]
+        case_data = data[1]
+
+        stat_dates.append(date_data)
+
+        case_data = case_data.split(",")
+        active_data = case_data[0]
+        recov_data = case_data[1]
+        death_data = case_data[2]
+        
+        actives.append(int(active_data))
+        recovs.append(int(recov_data))
+        deaths.append(int(death_data))
+
+    fig = plt.figure(figsize=(20,10))
+
+    plt.title("Active vs Death", fontsize=15)
+    plt.xlabel("Date", fontsize=15)
+    plt.ylabel("Cases Counts", fontsize=15)
+    plt.plot(stat_dates, actives, color="r", linewidth=5)
+    plt.plot(stat_dates, deaths, color="b", linewidth=5)
+
+    plt.yticks(np.arange(0, actives[-1]+3001, 2000))
+    plt.legend(labels = ["Active", "Death"], fontsize=15)
+    for ind, data in enumerate(actives):
+        plt.text(ind, data+230, str(data), fontsize = 15, color='r',horizontalalignment = 'center',verticalalignment = 'bottom')
+
+    for ind, data in enumerate(deaths):
+        plt.text(ind, data+330, str(data), fontsize = 15, color='b',horizontalalignment = 'center',verticalalignment = 'bottom')
+
+    plt.grid(axis='y')
+    plt.savefig(r'Active-vs-Death-' + cur_date + '.png')
+
+    
 if __name__ == "__main__":
     
     filename = r'Case-stats.txt'
-    case_stats,fin_dict,columns = get_data_from_url("https://www.mohfw.gov.in/")
     
+    case_stats,fin_dict,columns,title = get_data_from_url("https://www.mohfw.gov.in/")
+    write_data_to_file(filename,case_stats)
+        
     table = pd.DataFrame(data=fin_dict)
-    table.to_excel(r'excel_data/'+"COVID-19 INDIA "+cur_date+".xlsx",index = False)
+##    table.to_excel(r'excel_data/'+"COVID-19 INDIA "+cur_date+".xlsx",index = False)
 
     new_table = table[:-1] # Eliminating last row
     
@@ -218,8 +308,9 @@ if __name__ == "__main__":
     confirmed = new_table[columns[2]].map(int)
     recovered = new_table[columns[3]].map(int)
     death = new_table[columns[4]].map(int)
-
-    write_data_to_file(filename,case_stats)
     
-    plot_state_wise_data(cur_date,states,confirmed,recovered,death)
+    plot_state_wise_data(cur_date,states,confirmed,recovered,death,title)
     plot_date_wise_data()
+
+    plot_active_vs_recovered_data()
+    plot_active_vs_death_data()

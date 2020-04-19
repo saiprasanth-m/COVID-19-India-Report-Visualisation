@@ -7,10 +7,10 @@ Simple Visualisation of the official corona updates of india with [state-wise de
 
 Further implementation of reports/visual graphs generation is being developed.
 
-# Active vs Recovered Cases
-![](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/Active-vs-Recovered/Active-vs-Recovered.png)
-# Active vs Death Cases
-![](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/Active-vs-Death/Active-vs-Death.png)
+# Active vs Recovery Rate
+![](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/Rate%20Charts/Rate-Active-vs-Recovered.png)
+# Recovery vs Death Rate
+![](https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/Rate%20Charts/Rate-Recovery-vs-Death.png)
 
 <p align="center">
   <img width="399" height="194" src="https://github.com/saiprasanth-m/COVID-19-India-Report-Visualisation/blob/master/images/MoHFW.jpg">

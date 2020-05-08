@@ -1,8 +1,6 @@
 '''
 MIT License
-
 Copyright (c) 2020 Sai Prasanth
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -20,8 +18,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
 '''
+
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -29,8 +27,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
 import numpy as np
 import datetime
+import json
 
 cur_date = str(datetime.date.today())
+##cur_date = "2020-05-07"
 
 def get_data_from_url(Url):
     resp = requests.get(Url)
@@ -85,22 +85,41 @@ def get_data_from_url(Url):
                 new_colm.append(colm[j])
             final.append(new_colm)
             
-        fin_dict = {}  
+        fin_dict = {}
+        check = []
         for cnt in range(0,len(columns)):
             fin_dict[columns[cnt]] = final[cnt]
-
-##        fin_dict['S. No.'] = fin_dict['S. No.'][:-1]
+            check = len(fin_dict[columns[cnt]])
+            print(check)
+            if check>34:
+                fin_dict[columns[cnt]] = fin_dict[columns[cnt]][:-1]
+            
         return case_stats,fin_dict,columns,Title[1]
-
+    
+def create_json(out_data):
+    stat_dict = {}
+    for data in out_data:
+        date = data.split(":")[0]
+        counts = data.split(":")[1]
+        stat_dict[date]=counts
+        
+    with open("Case-stats.json", "w") as file:
+        obj = json.dumps(stat_dict)
+        file.write(obj)
+        file.close()
+    return obj
+        
 def read_data_from_file(filename):
     read_file = open(filename,"r",encoding = 'utf-8')
     out = read_file.readlines()
     read_file.close()
-    return out
-
+    json_ = create_json(out)
+    return out 
+    
 def write_data_to_file(filename,case_stats):
     out = read_data_from_file(filename)
     last_entry = out[len(out)-1]
+    
     if last_entry != case_stats:
         if last_entry.split(":")[0] == case_stats.split(":")[0]: #If case data has been updated in the same date
             temp_data = out[:len(out)-1]
@@ -108,11 +127,13 @@ def write_data_to_file(filename,case_stats):
             for val in temp_data:
                 temp_str = temp_str+val
             temp_str = temp_str+case_stats
+                
             write_file = open(filename,"w")
             write_file.write(temp_str)
             write_file.close()
             print("Data has been written in: "+filename)
         else:
+            
             write_file = open(filename,"a")
             write_file.write(case_stats)
             write_file.close()
@@ -163,7 +184,7 @@ def plot_state_wise_data(date,states,confirmed,recovered,death,title):
     max_cnt = sorted(confirmed)
     min_val = 0
     max_val = max_cnt[len(max_cnt)-1]+ 500
-    plt.yticks(np.arange(min_val,max_val,200),fontsize = 12)
+    plt.yticks(np.arange(min_val,max_val,1000),fontsize = 12)
    
     plt.xlabel('States/UT',fontsize = 15)
     plt.ylabel('Count',fontsize = 15)
@@ -295,13 +316,6 @@ def plot_active_vs_recovered_data():
     plt.yticks(np.arange(0, 100, 25))
     plt.legend(labels = ["Active", "Recovered"], fontsize=15)
 
-##    plt.grid(axis='y')
-##    for ind, data in enumerate(active_rate):
-##        plt.text(ind, data+2, str(data)+"%", fontsize = 15, color='r',horizontalalignment = 'center',verticalalignment = 'bottom')
-##
-##    for ind, data in enumerate(recov_rate):
-##        plt.text(ind, data+2, str(data)+"%", fontsize = 15, color='coral',horizontalalignment = 'center',verticalalignment = 'bottom')
-
     plt.savefig(r'Rate-Active-vs-Recovered.png')
 
 def plot_active_vs_death_data():
@@ -352,22 +366,16 @@ def plot_active_vs_death_data():
 
     plt.yticks(np.arange(0, 100, 25))
     plt.legend(labels = ["Recovery", "Death"], fontsize=15)
-##    for ind, data in enumerate(actives):
-##        plt.text(ind, data+230, str(data), fontsize = 15, color='r',horizontalalignment = 'center',verticalalignment = 'bottom')
-##
-##    for ind, data in enumerate(deaths):
-##        plt.text(ind, data+330, str(data), fontsize = 15, color='b',horizontalalignment = 'center',verticalalignment = 'bottom')
 
-##    plt.grid(axis='y')
     plt.savefig(r'Rate-Recovery-vs-Death.png')
 
     
 if __name__ == "__main__":
     
     filename = r'Case-stats.txt'
-##    plot_active_vs_recovered_data()
       
     case_stats,fin_dict,columns,title = get_data_from_url("https://www.mohfw.gov.in/")
+
     write_data_to_file(filename,case_stats)
         
     table = pd.DataFrame(data=fin_dict)
@@ -382,10 +390,8 @@ if __name__ == "__main__":
 
     print("\nStarted plotting...")
     
-##    plot_state_wise_data(cur_date,states,confirmed,recovered,death,title)
+    plot_state_wise_data(cur_date,states,confirmed,recovered,death,title)
     plot_date_wise_data()
 
     plot_active_vs_recovered_data()
     plot_active_vs_death_data()
-
-

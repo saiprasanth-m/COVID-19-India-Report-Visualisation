@@ -90,7 +90,6 @@ def get_data_from_url(Url):
         for cnt in range(0,len(columns)):
             fin_dict[columns[cnt]] = final[cnt]
             check = len(fin_dict[columns[cnt]])
-            print(check)
             if check>34:
                 fin_dict[columns[cnt]] = fin_dict[columns[cnt]][:-1]
             
@@ -242,8 +241,8 @@ def plot_date_wise_data():
     plt.bar(X, recovs, 0.25, color='b')
     plt.bar(X, deaths, 0.25, color='r')
 
-    plt.xticks(X, stat_dates, fontsize = 12)
-    plt.yticks(np.arange(0,actives[-1]+4001,2000), fontsize = 12)
+    plt.xticks(X, stat_dates, fontsize = 12, rotation=45)
+    plt.yticks(np.arange(0,actives[-1]+10001,6000), fontsize = 12)
 
     plt.xlabel('Cases',fontsize = 15)
     plt.ylabel('Count',fontsize = 15)
@@ -304,7 +303,7 @@ def plot_active_vs_recovered_data():
 ##    death_rate = [deaths[ind]-deaths[ind-1] if ind!=0 else 0 for ind,data in enumerate(deaths)]
 
 ##    print(recov_rate)
-    
+    X = np.arange(0,len(stat_dates))
     fig = plt.figure(figsize=(20,10))
 
     plt.title("Active vs Recovered Rate", fontsize=15)
@@ -313,6 +312,7 @@ def plot_active_vs_recovered_data():
     sns.pointplot(stat_dates, active_rate, color="r", linewidth=5, markers='o')
     sns.pointplot(stat_dates, recov_rate, color="coral", linewidth=5, markers='o')
 
+    plt.xticks(X, stat_dates, rotation=45)
     plt.yticks(np.arange(0, 100, 25))
     plt.legend(labels = ["Active", "Recovered"], fontsize=15)
 
@@ -355,7 +355,8 @@ def plot_active_vs_death_data():
     active_rate = [round(100*(actives[ind]-actives[ind-1])/actives[ind-1]) if ind!=0 else 0 for ind,data in enumerate(actives)]
     recov_rate = [round(100* abs(recovs[ind]-recovs[ind-1])/recovs[ind-1]) if ind!=0 else 0 for ind,data in enumerate(recovs)]
     death_rate = [round(100*(deaths[ind]-deaths[ind-1])/deaths[ind-1]) if ind!=0 else 0 for ind,data in enumerate(deaths)]
-    
+
+    X = np.arange(0, len(stat_dates))
     fig = plt.figure(figsize=(20,10))
 
     plt.title("Recovery vs Death Rate", fontsize=15)
@@ -364,6 +365,7 @@ def plot_active_vs_death_data():
     sns.pointplot(stat_dates, recov_rate, color="coral", linewidth=5, markers='o')
     sns.pointplot(stat_dates, death_rate, color="r", linewidth=5, markers='o')
 
+    plt.xticks(X, stat_dates, rotation=45)
     plt.yticks(np.arange(0, 100, 25))
     plt.legend(labels = ["Recovery", "Death"], fontsize=15)
 
@@ -373,7 +375,6 @@ def plot_active_vs_death_data():
 if __name__ == "__main__":
     
     filename = r'Case-stats.txt'
-      
     case_stats,fin_dict,columns,title = get_data_from_url("https://www.mohfw.gov.in/")
 
     write_data_to_file(filename,case_stats)

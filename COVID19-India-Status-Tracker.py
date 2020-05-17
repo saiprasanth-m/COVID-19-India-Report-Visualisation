@@ -30,7 +30,7 @@ import datetime
 import json
 
 cur_date = str(datetime.date.today())
-##cur_date = "2020-05-07"
+##cur_date = "2020-05-14"
 
 def get_data_from_url(Url):
     resp = requests.get(Url)
@@ -86,13 +86,22 @@ def get_data_from_url(Url):
             final.append(new_colm)
             
         fin_dict = {}
-        check = []
+        check_list = []
+        len_list = []
         for cnt in range(0,len(columns)):
             fin_dict[columns[cnt]] = final[cnt]
             check = len(fin_dict[columns[cnt]])
-            if check>34:
-                fin_dict[columns[cnt]] = fin_dict[columns[cnt]][:-1]
-            
+            len_list.append(check)
+            check_list.append([columns[cnt],check])
+        #print(check_list)
+        
+        for col,chk in check_list:
+            if chk >= min(len_list):
+                if chk == min(len_list):
+                    fin_dict[col] = fin_dict[col][:-2]
+                else:
+                    fin_dict[col] = fin_dict[col][:-3]
+        #print(fin_dict)
         return case_stats,fin_dict,columns,Title[1]
     
 def create_json(out_data):
@@ -183,7 +192,7 @@ def plot_state_wise_data(date,states,confirmed,recovered,death,title):
     max_cnt = sorted(confirmed)
     min_val = 0
     max_val = max_cnt[len(max_cnt)-1]+ 500
-    plt.yticks(np.arange(min_val,max_val,1000),fontsize = 12)
+    plt.yticks(np.arange(min_val,max_val,2000),fontsize = 12)
    
     plt.xlabel('States/UT',fontsize = 15)
     plt.ylabel('Count',fontsize = 15)
@@ -374,7 +383,7 @@ def plot_active_vs_death_data():
     
 if __name__ == "__main__":
     
-    filename = r'Case-stats.txt'
+    filename = r'Case-stats.txt'      
     case_stats,fin_dict,columns,title = get_data_from_url("https://www.mohfw.gov.in/")
 
     write_data_to_file(filename,case_stats)
@@ -396,3 +405,4 @@ if __name__ == "__main__":
 
     plot_active_vs_recovered_data()
     plot_active_vs_death_data()
+
